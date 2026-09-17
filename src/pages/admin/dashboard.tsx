@@ -58,6 +58,11 @@ import {
   pingTaskId,
   pingTaskName,
 } from "@/utils/metricSeries";
+import {
+  excludesRanking,
+  excludesTrafficSummary,
+  type RankingKind,
+} from "@/utils/dashboardExclusions";
 
 const formatSpeed = (bytes: number): string => {
   if (bytes === 0) return "0 B/s";
@@ -226,6 +231,7 @@ type TrafficSummary = {
 
 const computeTrafficSummary = (
   res: QueryMetricsResponse | null,
+  summaryExcludedUuids: ReadonlySet<string>,
 ): TrafficSummary | null => {
   if (!res) return null;
 
@@ -284,14 +290,23 @@ const computeTrafficSummary = (
       continue;
     }
     const entity = series.entity_id;
+    const includeInSummary = !summaryExcludedUuids.has(entity);
     for (const point of series.points ?? []) {
       if (point.value == null) continue;
       const ts = new Date(point.time).getTime();
-      const entry =
-        byTime.get(ts) ?? { upRate: 0, downRate: 0, upDelta: 0, downDelta: 0 };
+      const entry = includeInSummary
+        ? (byTime.get(ts) ?? {
+            upRate: 0,
+            downRate: 0,
+            upDelta: 0,
+            downDelta: 0,
+          })
+        : null;
       if (isRate) {
-        if (isUp) entry.upRate += point.value;
-        else entry.downRate += point.value;
+        if (entry) {
+          if (isUp) entry.upRate += point.value;
+          else entry.downRate += point.value;
+        }
         const rateMap = byEntityRate.get(entity) ?? new Map();
         const rateEntry = rateMap.get(ts) ?? { up: 0, down: 0 };
         if (isUp) rateEntry.up += point.value;
@@ -300,12 +315,12 @@ const computeTrafficSummary = (
         byEntityRate.set(entity, rateMap);
       } else if (isUp) {
         if (discontinuities.has(`${entity}\0up\0${ts}`)) continue;
-        entry.upDelta += point.value;
+        if (entry) entry.upDelta += point.value;
       } else {
         if (discontinuities.has(`${entity}\0down\0${ts}`)) continue;
-        entry.downDelta += point.value;
+        if (entry) entry.downDelta += point.value;
       }
-      byTime.set(ts, entry);
+      if (entry) byTime.set(ts, entry);
       if (!isRate) {
         const entityEntry = byEntity.get(entity) ?? { up: 0, down: 0 };
         if (isUp) entityEntry.up += point.value;
@@ -460,6 +475,23 @@ const DashboardContent = () => {
     [nodeList],
   );
 
+  const dashboardExclusions = useMemo(() => {
+    const rankings: Record<RankingKind, Set<string>> = {
+      traffic: new Set(),
+      cpu: new Set(),
+      memory: new Set(),
+      ping: new Set(),
+    };
+    const trafficSummary = new Set<string>();
+    for (const node of nodeList ?? []) {
+      for (const kind of Object.keys(rankings) as RankingKind[]) {
+        if (excludesRanking(node.tags, kind)) rankings[kind].add(node.uuid);
+      }
+      if (excludesTrafficSummary(node.tags)) trafficSummary.add(node.uuid);
+    }
+    return { rankings, trafficSummary };
+  }, [nodeList]);
+
   const expiringNodes = useMemo(() => {
     const now = Date.now();
     const deadline = now + EXPIRING_SOON_DAYS * DAY_MS;
@@ -573,7 +605,18 @@ const DashboardContent = () => {
 
   // 由一次 queryMetrics 响应派生各指标卡数据；nodeList 就绪后
   // nodeNameMap/memTotalMap 变化会自动重算，无需再次请求。
-  const traffic = useMemo(() => computeTrafficSummary(metricsRes), [metricsRes]);
+  const traffic = useMemo(
+    () => computeTrafficSummary(metricsRes, dashboardExclusions.trafficSummary),
+    [metricsRes, dashboardExclusions],
+  );
+
+  const trafficRankItems = useMemo(
+    () =>
+      (traffic?.nodeTotals ?? []).filter(
+        (item) => !dashboardExclusions.rankings.traffic.has(item.uuid),
+      ),
+    [traffic, dashboardExclusions],
+  );
 
   const topCpu = useMemo<TopRankItem[]>(
     () =>
@@ -582,8 +625,8 @@ const DashboardContent = () => {
         CPU_METRIC_KEYS[0],
         nodeNameMap,
         (_uuid, value) => value,
-      ),
-    [metricsRes, nodeNameMap],
+      ).filter((item) => !dashboardExclusions.rankings.cpu.has(item.uuid)),
+    [metricsRes, nodeNameMap, dashboardExclusions],
   );
 
   const topMem = useMemo<TopRankItem[]>(
@@ -596,8 +639,10 @@ const DashboardContent = () => {
           const totalBytes = memTotalMap.get(uuid) ?? 0;
           return totalBytes > 0 ? (value / totalBytes) * 100 : 0;
         },
+      ).filter(
+        (item) => !dashboardExclusions.rankings.memory.has(item.uuid),
       ),
-    [metricsRes, nodeNameMap, memTotalMap],
+    [metricsRes, nodeNameMap, memTotalMap, dashboardExclusions],
   );
 
   const handleRenew = async (node: NodeBasicInfo) => {
@@ -706,28 +751,40 @@ const DashboardContent = () => {
     const taskMap = new Map(
       pingTasks.map((task) => [String(task.id), task]),
     );
-    return pingStats.map((stat) => {
-      const taskName = pingTaskName(
-        stat.task_id,
-        taskMap,
-        (id) => `${t("ping.task", "Ping task")} ${id}`,
-      );
-      const nodeName =
-        nodeNameMap.get(stat.entity_id) ?? stat.entity_id.slice(0, 8);
-      const p95 =
-        pingP95Map.get(pingMetricStatKey(stat.entity_id, stat.task_id)) ?? null;
-      return {
-        key: pingMetricStatKey(stat.entity_id, stat.task_id),
-        entityId: stat.entity_id,
-        taskId: stat.task_id,
-        label: `${nodeName} · ${taskName}`,
-        p95,
-        volatility: stat.p99_p50_ratio ?? 0,
-        loss: stat.loss ?? 0,
-        valid: stat.valid,
-      } satisfies PingRankItem;
-    });
-  }, [pingStats, pingP95Map, pingTasks, nodeNameMap, t]);
+    return pingStats
+      .filter(
+        (stat) => !dashboardExclusions.rankings.ping.has(stat.entity_id),
+      )
+      .map((stat) => {
+        const taskName = pingTaskName(
+          stat.task_id,
+          taskMap,
+          (id) => `${t("ping.task", "Ping task")} ${id}`,
+        );
+        const nodeName =
+          nodeNameMap.get(stat.entity_id) ?? stat.entity_id.slice(0, 8);
+        const p95 =
+          pingP95Map.get(pingMetricStatKey(stat.entity_id, stat.task_id)) ??
+          null;
+        return {
+          key: pingMetricStatKey(stat.entity_id, stat.task_id),
+          entityId: stat.entity_id,
+          taskId: stat.task_id,
+          label: `${nodeName} · ${taskName}`,
+          p95,
+          volatility: stat.p99_p50_ratio ?? 0,
+          loss: stat.loss ?? 0,
+          valid: stat.valid,
+        } satisfies PingRankItem;
+      });
+  }, [
+    pingStats,
+    pingP95Map,
+    pingTasks,
+    nodeNameMap,
+    dashboardExclusions,
+    t,
+  ]);
 
   // 无有效延迟样本(如 100% 丢包)的节点波动无意义，不参与稳定性排名
   const stableLatencyItems = useMemo(
@@ -1247,7 +1304,7 @@ const DashboardContent = () => {
                 </AreaChart>
               </ChartContainer>
             )}
-            {traffic && traffic.nodeTotals.length > 0 && (
+            {traffic && trafficRankItems.length > 0 && (
               <>
                 <Separator size="4" />
                 <Flex direction="column" gap="3">
@@ -1260,7 +1317,7 @@ const DashboardContent = () => {
                       ariaLabel={t("common.details", "Details")}
                     >
                       <Flex direction="column" gap="2">
-                        {traffic.nodeTotals.map((node, index) => (
+                        {trafficRankItems.map((node, index) => (
                           <Flex
                             key={node.uuid}
                             justify="between"
@@ -1298,7 +1355,7 @@ const DashboardContent = () => {
                     </RankListPopover>
                   </Flex>
                   <Flex direction="column" gap="3">
-                    {traffic.nodeTotals.slice(0, 5).map((node, index) => (
+                    {trafficRankItems.slice(0, 5).map((node, index) => (
                       <Flex key={node.uuid} direction="column" gap="1">
                         <Flex justify="between" align="center" gap="2">
                           <Text size="2" className="truncate">
@@ -1345,7 +1402,7 @@ const DashboardContent = () => {
                             className="h-full rounded-full"
                             style={{
                               width: `${
-                                (node.total / traffic.nodeTotals[0].total) *
+                                (node.total / trafficRankItems[0].total) *
                                 100
                               }%`,
                               backgroundColor: "var(--accent-9)",

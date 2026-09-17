@@ -346,7 +346,7 @@
     "success": "成功",
     "tags": "标签",
     "tagsDescription": "多个标签用';'分隔",
-    "tagsTips": "多个标签使用\";\"隔开。</br> 如需指定颜色，请在标签末尾添加&lt;color&gt;，例如：1Gbps&lt;green&gt;。</br> 可用的颜色列表请参考：<label class=\"bg-accent-a5 rounded-sm\"><a href=\"https://www.radix-ui.com/themes/docs/theme/color\" target=\"_blank\"> Color – Radix Themes</a></label>",
+    "tagsTips": "多个标签使用\";\"隔开。</br> 排行排除：exclude-ranking:traffic/cpu/memory/ping/all。</br> 24小时流量汇总排除：exclude-summary:traffic/all。控制标签不会显示在节点卡片上。</br> 如需指定颜色，请在标签末尾添加&lt;color&gt;，例如：1Gbps&lt;green&gt;。</br> 可用的颜色列表请参考：<label class=\"bg-accent-a5 rounded-sm\"><a href=\"https://www.radix-ui.com/themes/docs/theme/color\" target=\"_blank\"> Color – Radix Themes</a></label>",
     "threshold": "阈值",
     "title": "标题",
     "triennial": "三年",
