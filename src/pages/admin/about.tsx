@@ -16,7 +16,7 @@ export default function AboutPage() {
   const [view, setView] = useState("open_source");
   useEffect(() => {
     fetch(
-      "https://raw.githubusercontent.com/komari-monitor/komari/refs/heads/main/README.md"
+      "https://raw.githubusercontent.com/bi11zh3nn/komari/refs/heads/main/README.md"
     )
       .then((res) => res.text())
       .then(setMarkdown);
@@ -192,7 +192,7 @@ export default function AboutPage() {
                   )}
                 </div>
                 <a
-                  href="https://github.com/komari-monitor/komari/blob/main/README.md"
+                  href="https://github.com/bi11zh3nn/komari/blob/main/README.md"
                   target="_blank"
                   rel="noreferrer"
                   className="flex flex-row gap-2 text-sm items-center"
