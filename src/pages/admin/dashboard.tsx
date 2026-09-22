@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Badge,
   Button,
-  Card,
   Flex,
   IconButton,
   Popover,
@@ -24,6 +23,8 @@ import { useNodeList, type NodeBasicInfo } from "@/contexts/NodeListContext";
 import { useRPC2Call } from "@/contexts/RPC2Context";
 import { formatBytes } from "@/utils/unitHelper";
 import Loading from "@/components/loading";
+import { DashboardBoard, DashboardWidget } from "@/components/admin/dashboard/DashboardBoard";
+import { ExtraWidget } from "@/components/admin/dashboard/ExtraWidgets";
 import Tips from "@/components/ui/tips";
 import {
   ChartContainer,
@@ -812,6 +813,7 @@ const DashboardContent = () => {
     title: string,
     items: PingRankItem[],
     renderValue: (item: PingRankItem) => React.ReactNode,
+    limit: number,
   ) => (
     <Flex direction="column" gap="2" className="flex-1 min-w-56">
       <Flex justify="between" align="center" gap="2">
@@ -857,7 +859,7 @@ const DashboardContent = () => {
         </Text>
       ) : (
         <Flex direction="column" gap="2">
-          {items.slice(0, 3).map((item, index) => (
+          {items.slice(0, limit).map((item, index) => (
             <Flex key={item.key} justify="between" align="center" gap="2">
               <Text size="2" className="truncate" title={item.label}>
                 <Text size="2" color="gray">
@@ -924,8 +926,8 @@ const DashboardContent = () => {
         </Button>
       </Flex>
 
-      <Flex gap="4" wrap="wrap">
-        <Card className="km-dashboard-card flex-1 min-w-72">
+      <DashboardBoard>
+        <DashboardWidget id="overview">
           <Flex gap="4" align="center">
             <ProgressRing
               percent={stats.onlineRate}
@@ -990,9 +992,9 @@ const DashboardContent = () => {
               </Flex>
             </Flex>
           </Flex>
-        </Card>
+        </DashboardWidget>
 
-        <Card className="km-dashboard-card flex-1 min-w-64">
+        <DashboardWidget id="database">
           <Flex direction="column" gap="3">
             <Flex gap="2" align="center" style={{ color: "var(--gray-10)" }}>
               <Database size={18} />
@@ -1030,9 +1032,9 @@ const DashboardContent = () => {
               </Flex>
             </Flex>
           </Flex>
-        </Card>
+        </DashboardWidget>
 
-        <Card className="km-dashboard-card flex-1 min-w-72">
+        <DashboardWidget id="expiry" supportsLimit>{(limit) =>
           <Flex direction="column" gap="3">
             <Flex gap="2" align="center" style={{ color: "var(--amber-11)" }}>
               <CalendarClock size={18} />
@@ -1046,7 +1048,7 @@ const DashboardContent = () => {
               </Text>
             ) : (
               <Flex direction="column" gap="3">
-                {expiringNodes.map((node) => {
+                {expiringNodes.slice(0, limit).map((node) => {
                   const daysLeft = Math.ceil(
                     (new Date(node.expired_at).getTime() - Date.now()) / DAY_MS,
                   );
@@ -1101,11 +1103,9 @@ const DashboardContent = () => {
               </Flex>
             )}
           </Flex>
-        </Card>
-      </Flex>
+        }</DashboardWidget>
 
-      <Flex gap="4" wrap="wrap" align="stretch">
-        <Card className="flex-1 min-w-[320px]">
+        <DashboardWidget id="traffic" supportsLimit>{(limit) =>
           <Flex direction="column" gap="3">
             <Flex justify="between" align="center" wrap="wrap" gap="2">
               <Text size="3" weight="bold">
@@ -1355,7 +1355,7 @@ const DashboardContent = () => {
                     </RankListPopover>
                   </Flex>
                   <Flex direction="column" gap="3">
-                    {trafficRankItems.slice(0, 5).map((node, index) => (
+                    {trafficRankItems.slice(0, limit).map((node, index) => (
                       <Flex key={node.uuid} direction="column" gap="1">
                         <Flex justify="between" align="center" gap="2">
                           <Text size="2" className="truncate">
@@ -1417,31 +1417,30 @@ const DashboardContent = () => {
               </>
             )}
           </Flex>
-        </Card>
+        }</DashboardWidget>
 
-        <Flex direction="column" gap="4" className="w-80 shrink-0">
-          <Card>
+          <DashboardWidget id="cpu" supportsLimit>{(limit) =>
             <TopRankCard
               title={t("dashboard.topCpu", "Top CPU usage")}
               icon={<Cpu size={18} />}
               items={topCpu}
+              limit={limit}
               metricKeys={CPU_METRIC_KEYS}
               t={t}
             />
-          </Card>
-          <Card>
+          }</DashboardWidget>
+          <DashboardWidget id="memory" supportsLimit>{(limit) =>
             <TopRankCard
               title={t("dashboard.topMem", "Top memory usage")}
               icon={<MemoryStick size={18} />}
               items={topMem}
+              limit={limit}
               metricKeys={MEM_METRIC_KEYS}
               t={t}
             />
-          </Card>
-        </Flex>
-      </Flex>
+          }</DashboardWidget>
 
-      <Card>
+      <DashboardWidget id="ping" supportsLimit>{(limit) =>
         <Flex direction="column" gap="3">
           <Flex gap="2" align="center" style={{ color: "var(--gray-10)" }}>
             <Gauge size={18} />
@@ -1454,11 +1453,13 @@ const DashboardContent = () => {
               t("dashboard.stableLatency", "Most stable latency"),
               stableLatencyItems,
               renderLatencyValue,
+              limit,
             )}
             {renderLatencyColumn(
               t("dashboard.unstableLatency", "Most unstable latency"),
               unstableLatencyItems,
               renderLatencyValue,
+              limit,
             )}
             {renderLatencyColumn(
               t("dashboard.highestLoss", "Highest packet loss"),
@@ -1468,10 +1469,15 @@ const DashboardContent = () => {
                   {item.loss.toFixed(1)}%
                 </Text>
               ),
+              limit,
             )}
           </Flex>
         </Flex>
-      </Card>
+      }</DashboardWidget>
+      <DashboardWidget id="resources"><ExtraWidget kind="resources" nodes={nodeList ?? []} latest={latest} /></DashboardWidget>
+      <DashboardWidget id="disk" supportsLimit>{(limit) => <ExtraWidget kind="disk" nodes={nodeList ?? []} latest={latest} limit={limit} />}</DashboardWidget>
+      <DashboardWidget id="shortcuts"><ExtraWidget kind="shortcuts" nodes={nodeList ?? []} latest={latest} /></DashboardWidget>
+      </DashboardBoard>
     </Flex>
   );
 };
@@ -1537,12 +1543,14 @@ const TopRankCard = ({
   icon,
   items,
   metricKeys,
+  limit = 4,
   t,
 }: {
   title: string;
   icon: React.ReactNode;
   items: TopRankItem[];
   metricKeys: string[];
+  limit?: number;
   t: TFunction;
 }) => {
   return (
@@ -1593,7 +1601,7 @@ const TopRankCard = ({
         </Text>
       ) : (
         <Flex direction="column" gap="3">
-          {items.slice(0, 4).map((item, index) => {
+          {items.slice(0, limit).map((item, index) => {
             const percent = Math.min(Math.max(item.value, 0), 100);
             const barColor =
               percent >= 80 ? "red" : percent >= 60 ? "orange" : "green";
