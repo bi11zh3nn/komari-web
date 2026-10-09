@@ -1354,7 +1354,6 @@
     },
     "missing_required_fields": "Silakan isi kolom yang wajib: {{fieldNames}}",
     "notification": {
-      "channel_unavailable": "Saluran notifikasi ini saat ini tidak terdaftar.",
       "email": {
         "host": "Server SMTP",
         "password": "Kata Sandi",
@@ -1387,8 +1386,7 @@
       "template_description": "Komari akan mengirim pemberitahuan sesuai dengan template pemberitahuan pesan",
       "test_description": "Kirim pesan uji coba",
       "test_title": "Kirim pesan uji coba",
-      "title": "Notifikasi",
-      "unavailable": "Tidak tersedia"
+      "title": "Notifikasi"
     },
     "settings_save_failed": "Gagal menyimpan pengaturan",
     "settings_saved": "Pengaturan berhasil disimpan",

@@ -482,6 +482,7 @@ const DashboardContent = () => {
       cpu: new Set(),
       memory: new Set(),
       ping: new Set(),
+      disk: new Set(),
     };
     const trafficSummary = new Set<string>();
     for (const node of nodeList ?? []) {
@@ -644,6 +645,14 @@ const DashboardContent = () => {
         (item) => !dashboardExclusions.rankings.memory.has(item.uuid),
       ),
     [metricsRes, nodeNameMap, memTotalMap, dashboardExclusions],
+  );
+
+  const diskRankingNodes = useMemo(
+    () =>
+      (nodeList ?? []).filter(
+        (node) => !dashboardExclusions.rankings.disk.has(node.uuid),
+      ),
+    [nodeList, dashboardExclusions],
   );
 
   const handleRenew = async (node: NodeBasicInfo) => {
@@ -1475,7 +1484,7 @@ const DashboardContent = () => {
         </Flex>
       }</DashboardWidget>
       <DashboardWidget id="resources"><ExtraWidget kind="resources" nodes={nodeList ?? []} latest={latest} /></DashboardWidget>
-      <DashboardWidget id="disk" supportsLimit>{(limit) => <ExtraWidget kind="disk" nodes={nodeList ?? []} latest={latest} limit={limit} />}</DashboardWidget>
+      <DashboardWidget id="disk" supportsLimit>{(limit) => <ExtraWidget kind="disk" nodes={diskRankingNodes} latest={latest} limit={limit} />}</DashboardWidget>
       <DashboardWidget id="shortcuts"><ExtraWidget kind="shortcuts" nodes={nodeList ?? []} latest={latest} /></DashboardWidget>
       </DashboardBoard>
     </Flex>

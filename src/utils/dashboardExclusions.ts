@@ -1,4 +1,4 @@
-export type RankingKind = "traffic" | "cpu" | "memory" | "ping";
+export type RankingKind = "traffic" | "cpu" | "memory" | "ping" | "disk";
 
 const tagsOf = (tags: string) =>
   new Set(

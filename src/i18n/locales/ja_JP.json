@@ -1354,7 +1354,6 @@
     },
     "missing_required_fields": "必須フィールドを入力してください: {{fieldNames}}",
     "notification": {
-      "channel_unavailable": "この通知チャネルは現在登録されていません。",
       "email": {
         "host": "SMTP サーバー",
         "password": "パスワード",
@@ -1387,8 +1386,7 @@
       "template_description": "Komariはメッセージ通知テンプレートに従って通知を送信します",
       "test_description": "テストメッセージを送信",
       "test_title": "テストメッセージを送信",
-      "title": "通知",
-      "unavailable": "利用不可"
+      "title": "通知"
     },
     "settings_save_failed": "設定の保存に失敗しました",
     "settings_saved": "設定が保存されました",
