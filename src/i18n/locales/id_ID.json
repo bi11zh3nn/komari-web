@@ -1,5 +1,22 @@
 {
+  "adminNavigation": {
+    "operations": "Pemantauan & operasi",
+    "system": "Pengaturan sistem",
+    "security": "Akun & keamanan",
+    "site": "Pengaturan situs",
+    "general": "Pengaturan umum",
+    "login": "Autentikasi",
+    "profile": "Profil",
+    "sessions": "Sesi login",
+    "pluginSettings": "Pengaturan plugin",
+    "events": "Notifikasi peristiwa",
+    "pluginFeatures": "Fitur plugin",
+    "extensions": "Tampilan & plugin"
+  },
   "about": {
+    "dependency_scope": "Dependensi langsung dalam manifes proyek; Web mencakup dependensi pengembangan dan tidak menghitung referensi ke dirinya sendiri. Dependensi transitif tidak termasuk.",
+    "development_dependency": "Dependensi pengembangan (klasifikasi manifes)",
+    "twemoji_notice": "Kode: MIT; gambar: CC-BY-4.0; gambar tidak diubah",
     "ai": "Proses pengembangan proyek Komari didukung oleh alat kecerdasan buatan. Alat-alat ini digunakan untuk menjalankan tugas seperti pembuatan kode, refactoring, dan debugging, untuk meningkatkan efisiensi pengembangan dan kualitas kode. Semua kode dan saran yang dihasilkan oleh AI telah diperiksa dan divalidasi oleh pengembang manusia.",
     "open_source": "Komari bersifat open source berdasarkan lisensi MIT dan dibangun menggunakan perangkat lunak open source berikut:",
     "open_source_title": "Lisensi Perangkat Lunak Open Source",
@@ -674,12 +691,6 @@
     "welcome_title": "Selamat datang di Komari"
   },
   "just_now": "Baru saja",
-  "loadAlert": {
-    "metric": "Metrik",
-    "ratio": "Rasio",
-    "threshold_placeholder": "'80' untuk 80%",
-    "title": "Peringatan Beban"
-  },
   "loading": "Memuat",
   "log": {
     "title": "Log"
@@ -794,9 +805,6 @@
     },
     "general": {
       "title": "Peristiwa Umum"
-    },
-    "load": {
-      "title": "Beban"
     },
     "offline": {
       "cooldown": "Masa Tunda",
@@ -1354,6 +1362,7 @@
     },
     "missing_required_fields": "Silakan isi kolom yang wajib: {{fieldNames}}",
     "notification": {
+      "channel_unavailable": "Saluran notifikasi ini saat ini tidak terdaftar.",
       "email": {
         "host": "Server SMTP",
         "password": "Kata Sandi",
@@ -1386,7 +1395,8 @@
       "template_description": "Komari akan mengirim pemberitahuan sesuai dengan template pemberitahuan pesan",
       "test_description": "Kirim pesan uji coba",
       "test_title": "Kirim pesan uji coba",
-      "title": "Notifikasi"
+      "title": "Notifikasi",
+      "unavailable": "Tidak tersedia"
     },
     "settings_save_failed": "Gagal menyimpan pengaturan",
     "settings_saved": "Pengaturan berhasil disimpan",

@@ -1,5 +1,22 @@
 {
+  "adminNavigation": {
+    "operations": "監視と運用",
+    "system": "システム設定",
+    "security": "アカウントとセキュリティ",
+    "site": "サイト設定",
+    "general": "一般設定",
+    "login": "ログイン認証",
+    "profile": "プロフィール",
+    "sessions": "ログインセッション",
+    "pluginSettings": "プラグイン設定",
+    "events": "イベント通知",
+    "pluginFeatures": "プラグイン機能",
+    "extensions": "外観とプラグイン"
+  },
   "about": {
+    "dependency_scope": "各プロジェクトのマニフェストに宣言された直接依存関係です。Web は開発依存を含み、自己参照を除外します。間接依存は集計に含みません。",
+    "development_dependency": "開発依存（マニフェストの分類）",
+    "twemoji_notice": "コード: MIT、画像: CC-BY-4.0、画像は未変更",
     "ai": "Komari プロジェクトの開発プロセスは、人工知能ツールの支援を受けています。これらのツールは、コード生成、リファクタリング、デバッグなどのタスクを実行するために使用され、開発効率とコード品質を向上させます。AI によって生成されたすべてのコードと提案は、人間の開発者によってレビューおよび検証されています。",
     "open_source": "Komari は MIT ライセンスに基づいてオープンソースであり、以下のオープンソースソフトウェアを使用して構築されています：",
     "open_source_title": "オープンソースソフトウェアライセンス",
@@ -674,12 +691,6 @@
     "welcome_title": "Komari へようこそ"
   },
   "just_now": "たった今",
-  "loadAlert": {
-    "metric": "監視項目",
-    "ratio": "時間の割合",
-    "threshold_placeholder": "パーセンテージ、例えば80は80%を表します",
-    "title": "負荷アラート"
-  },
   "loading": "読み込み中...",
   "log": {
     "title": "ログ"
@@ -794,9 +805,6 @@
     },
     "general": {
       "title": "一般イベント"
-    },
-    "load": {
-      "title": "負荷通知"
     },
     "offline": {
       "cooldown": "クールダウン期間",
@@ -1354,6 +1362,7 @@
     },
     "missing_required_fields": "必須フィールドを入力してください: {{fieldNames}}",
     "notification": {
+      "channel_unavailable": "この通知チャネルは現在登録されていません。",
       "email": {
         "host": "SMTP サーバー",
         "password": "パスワード",
@@ -1386,7 +1395,8 @@
       "template_description": "Komariはメッセージ通知テンプレートに従って通知を送信します",
       "test_description": "テストメッセージを送信",
       "test_title": "テストメッセージを送信",
-      "title": "通知"
+      "title": "通知",
+      "unavailable": "利用不可"
     },
     "settings_save_failed": "設定の保存に失敗しました",
     "settings_saved": "設定が保存されました",

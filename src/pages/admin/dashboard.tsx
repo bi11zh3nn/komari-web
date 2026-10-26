@@ -907,7 +907,7 @@ const DashboardContent = () => {
     </Text>
   );
 
-  if (isLoading) return <Loading text="" />;
+  if (isLoading) return <Loading />;
   if (error) return <div>{error}</div>;
 
   return (
@@ -1165,7 +1165,7 @@ const DashboardContent = () => {
             </Flex>
             {traffic === null ? (
               <Flex align="center" justify="center" style={{ height: 180 }}>
-                <Loading text="" />
+                <Loading />
               </Flex>
             ) : traffic.points.length === 0 ? (
               <Flex align="center" justify="center" style={{ height: 180 }}>
@@ -1759,9 +1759,9 @@ const MiniMetricChart = ({
       config[key] = {
         label:
           key === "net.in.rate"
-            ? t("dashboard.uploadRate", "Upload rate")
+            ? t("dashboard.downloadRate", "Download rate")
             : key === "net.out.rate"
-              ? t("dashboard.downloadRate", "Download rate")
+              ? t("dashboard.uploadRate", "Upload rate")
               : key === "cpu.usage"
                 ? t("dashboard.avgCpu", "Average CPU")
                 : key === PING_LATENCY_METRIC
@@ -1780,7 +1780,7 @@ const MiniMetricChart = ({
       </Text>
       {loading ? (
         <Flex align="center" justify="center" style={{ height: 180 }}>
-          <Loading text="" />
+          <Loading />
         </Flex>
       ) : error ? (
         <Flex align="center" justify="center" style={{ height: 180 }}>

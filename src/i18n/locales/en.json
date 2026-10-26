@@ -1,4 +1,18 @@
 {
+  "adminNavigation": {
+    "operations": "Monitoring & operations",
+    "system": "System settings",
+    "security": "Account & security",
+    "site": "Site settings",
+    "general": "General settings",
+    "login": "Authentication",
+    "profile": "Profile",
+    "sessions": "Login sessions",
+    "pluginSettings": "Plugin settings",
+    "events": "Event notifications",
+    "pluginFeatures": "Plugin features",
+    "extensions": "Appearance & plugins"
+  },
   "dashboardLayout": {
     "workspace": "My dashboard", "editing": "Edit layout", "customize": "Customize",
     "cards": "Select cards", "selection": "{{count}} cards selected",
@@ -67,6 +81,9 @@
     }
   },
   "about": {
+    "dependency_scope": "Direct dependencies declared in project manifests; Web includes development dependencies and excludes its self-reference. Transitive dependencies are not included in these counts.",
+    "development_dependency": "Development dependency (manifest classification)",
+    "twemoji_notice": "Code: MIT; graphics: CC-BY-4.0; graphics unmodified",
     "ai": "The development process of the Komari project has been assisted by artificial intelligence tools. These tools are used for tasks such as code generation, refactoring, and debugging to improve development efficiency and code quality. All AI-generated code and suggestions have been reviewed and validated by human developers.",
     "open_source": "Komari is open source under the MIT license and is built using the following open source software:",
     "open_source_title": "Open Source Software License",
@@ -688,12 +705,6 @@
     "welcome_title": "Welcome to Komari"
   },
   "just_now": "Just now",
-  "loadAlert": {
-    "metric": "Metric",
-    "ratio": "Ratio",
-    "threshold_placeholder": "'80' for 80%",
-    "title": "Load Alert"
-  },
   "loading": "Loading",
   "log": {
     "title": "Log"
@@ -808,9 +819,6 @@
     },
     "general": {
       "title": "General Events"
-    },
-    "load": {
-      "title": "Load"
     },
     "offline": {
       "cooldown": "Cooldown Period",
@@ -1346,6 +1354,8 @@
       "provider_fields": "Send Settings",
       "provider_fields_description": "Detailed settings for the information sending channel you choose",
       "provider_settings_fetch_failed": "Failed to load notification settings",
+      "channel_unavailable": "This notification channel is not currently registered.",
+      "unavailable": "Unavailable",
       "telegram": {
         "bot_token": "Telegram Bot Token",
         "chat_id": "Chat ID",

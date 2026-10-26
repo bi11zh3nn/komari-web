@@ -1,4 +1,18 @@
 {
+  "adminNavigation": {
+    "operations": "監控與維運",
+    "system": "系統設定",
+    "security": "帳號與安全",
+    "site": "站台設定",
+    "general": "一般設定",
+    "login": "登入驗證",
+    "profile": "個人帳戶",
+    "sessions": "登入工作階段",
+    "pluginSettings": "外掛設定",
+    "events": "事件通知",
+    "pluginFeatures": "外掛功能",
+    "extensions": "外觀與外掛"
+  },
   "dashboardLayout": {
     "workspace": "我的儀表板", "editing": "編輯佈局", "customize": "自訂",
     "cards": "選擇卡片", "selection": "已選擇 {{count}} 張卡片",
@@ -67,6 +81,9 @@
     }
   },
   "about": {
+    "dependency_scope": "統計各專案清單中宣告的直接相依套件；Web 包含開發相依套件，不包含專案自身引用。間接相依套件不計入此清單。",
+    "development_dependency": "開發相依套件（依清單分類）",
+    "twemoji_notice": "程式碼採用 MIT，圖像採用 CC-BY-4.0；圖像未修改",
     "ai": "Komari 專案的開發過程得到了人工智慧工具的輔助。這些工具被用於執行程式碼生成、重構和除錯等任務，以提高開發效率和程式碼品質。所有由 AI 生成的程式碼和建議都經過了人類開發者的審查與驗證。",
     "open_source": "Komari 基於 MIT 協議開源，並使用了以下開源軟體構建：",
     "open_source_title": "開源軟體許可協議",
@@ -693,12 +710,6 @@
     "welcome_title": "歡迎使用 Komari"
   },
   "just_now": "剛剛",
-  "loadAlert": {
-    "metric": "監控項",
-    "ratio": "時間佔比",
-    "threshold_placeholder": "百分比，例如80代表80%",
-    "title": "負載警報"
-  },
   "loading": "載入中...",
   "log": {
     "title": "日誌"
@@ -813,9 +824,6 @@
     },
     "general": {
       "title": "通用事件"
-    },
-    "load": {
-      "title": "負載通知"
     },
     "offline": {
       "cooldown": "冷靜期",
@@ -1351,6 +1359,8 @@
       "provider_fields": "傳送設定",
       "provider_fields_description": "詳細設定您選擇的資訊傳送渠道",
       "provider_settings_fetch_failed": "載入通知設定失敗",
+      "channel_unavailable": "目前通知渠道未註冊。",
+      "unavailable": "不可用",
       "telegram": {
         "bot_token": "Telegram Bot Token",
         "chat_id": "Chat ID",
